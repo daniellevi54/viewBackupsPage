@@ -11,51 +11,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página de Admin - TOPTI</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h1>TOPTI</h1>
-    <h2>Backups Admin</h2>
+    <header>
+        <h1>TOPTI</h1>
+        <h2>Backups Admin</h2>
+        <hr>
+    </header>
 
 <!--Listagem das lavanderias-->
-    <form method="POST" action="/admin">
-
-        <label for="lavanderia">
-            Lavanderia:
-        </label>
-
-        <select id="lavanderia" name="laundry">
-
-            <option value="">
-                Selecione...
-            </option>
-
-            <?php foreach ($laundrys as $name => $id): ?>
-
-                <option value="<?= $id ?>">
-                    <?= $name ?>
+    <main>
+        <form method="POST" action="/admin">
+            <label for="lavanderia">
+                Lavanderia:
+            </label>
+            <select id="lavanderia" name="laundry">
+                <option value="">
+                    Selecione...
                 </option>
-
-            <?php endforeach; ?>
-
-        </select>
-
-        <button type="submit">
-            Visualizar Backups
-        </button>
-
-    </form>
-    <br>
-    <a href="/admin/register">
-        <button>Cadastrar Lavanderia</button>
-    </a>
-    <br>
-    <br>
-    <!--Botão de logout-->
-    <a href="/logout">
-        <button>Logout</button>
-    </a>
-    <hr>
-
+                <?php foreach ($laundrys as $name => $id): ?>
+                    <option value="<?= $id ?>">
+                        <?= $name ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit">
+                Visualizar Backups
+            </button>
+        </form>
+        <br>
+        <a href="/admin/register">
+            <button>Cadastrar Lavanderia</button>
+        </a>
+        <br>
+        <br>
+        <!--Botão de logout-->
+        <a href="/logout">
+            <button>Logout</button>
+        </a>
+        <hr>
     <?php
         if(isset($_SESSION['laundry'])){
             $laundryName = array_search($_SESSION['laundry'], $laundrys);
@@ -83,5 +78,6 @@
         </a>
         <br>
     <?php endforeach ?>
+    </main>
 </body>
 </html>

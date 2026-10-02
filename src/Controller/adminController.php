@@ -24,6 +24,7 @@
 
             $DB = new Db;
             $laundrys = $DB->findAllLaundrys();
+            
     
             $id = $this->getLaundryID();
 
