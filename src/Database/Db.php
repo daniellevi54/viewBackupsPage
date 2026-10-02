@@ -24,7 +24,7 @@ class Db
     
     public function findAllLaundrys(){
         $sql='SELECT LVD_CODIGO, LVD_DESCRITIVO FROM lavanderias ';
-        $sql .='WHERE LVD_CODIGO > 0 ORDER BY LVD_CODIGO ASC';
+        $sql .='WHERE LVD_CODIGO > 0 ORDER BY LVD_DESCRITIVO ASC';
 
         $result = ibase_query($this->connection, $sql);
 
