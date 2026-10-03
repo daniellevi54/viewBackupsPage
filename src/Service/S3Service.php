@@ -47,22 +47,23 @@ class S3Service
         ];    
     }
 
-    private function sendRequest(array $request, string $method){
+    private function sendRequest(array $request, string $method, string $action){
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $request['url']);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $request['headers']);
-        $response = curl_exec($ch);
-
-        if ($response === false){
-            throw new RuntimeException('Erro ao executar requesição s3: ' . curl_error($ch));
-        }
-
-        curl_close($ch);
         
-        return $response;
+        // Configura o cURL para jogar o resultado direto para a saída padrão (Browser)
+        if ($action === 'list'){
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            return $response;
+        }else{
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+            return $ch;
+        }
+        
     }
 
     private function parseResponse($response){
@@ -79,14 +80,45 @@ class S3Service
         . '&' . rawurlencode('prefix') . '=' . rawurlencode($prefix); 
 
         $request = $this->buildRequest('GET', '/', $queryString, '');
-        $response = $this->sendRequest($request, 'GET');
+        $response = $this->sendRequest($request, 'GET', 'list');
         return $this->parseResponse($response);
     }
 
     public function downloadObject($object){
+
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+
         $request = $this->buildRequest('GET', "/$object", '', '');
-        $response = $this->sendRequest($request, 'GET');
+        $response = $this->sendRequest($request, 'GET', 'download');
+
+        // Configura os cabeçalhos HTTP para forçar o download no navegador do cliente
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/x-7z-compressed');
+        header('Content-Disposition: attachment; filename="' . basename($object) . '"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+
+        // Executa a requisição e envia os dados diretamente para a saída (navegador)
+        $success = curl_exec($response);
+
+        if ($success === false) {
+            $error = curl_error($response);
+            curl_close($response);
+            throw new RuntimeException('Erro ao executar requisição s3 para o navegador: ' . $error);
+        }
+
+        $httpCode = curl_getinfo($response, CURLINFO_HTTP_CODE);
+        curl_close($response);
+
+        if ($httpCode !== 200) {
+            // Nota: Se o status não for 200, os dados enviados ao navegador serão o XML de erro da AWS.
+            throw new RuntimeException("Erro da AWS S3 (HTTP $httpCode)");
+        }
+
+        exit; // Encerra o script para garantir que nenhum HTML extra suje o binário do arquivo
         return $response;
     } 
 }
-?>
