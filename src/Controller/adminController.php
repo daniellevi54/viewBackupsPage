@@ -16,6 +16,8 @@
             }
 
             $_SESSION['path'] = $_GET['path'] ?? '';
+            
+            $actualDay = date('Y/m/d/');
 
             if (isset($_POST['laundry']) && $_POST['laundry'] !== '') {
                 $_SESSION['laundry'] = $_POST['laundry'] ?? '';
@@ -24,7 +26,6 @@
 
             $DB = new Db;
             $laundrys = $DB->findAllLaundrys();
-            
     
             $id = $this->getLaundryID();
 
@@ -36,7 +37,8 @@
                     'laundrys' => $laundrys,
                     'backups'  => $objects ?? '',
                     'currentPath' => $_SESSION['path'] ?? '',
-                    'parentPath' => $this->parentPath($_SESSION['path'] ?? '')
+                    'parentPath' => $this->parentPath($_SESSION['path'] ?? ''),
+                    'actualDay' => $actualDay
                 ]
             );
         }

@@ -3,6 +3,7 @@
 /** @var array $backups */
 /** @var string $currentPath */
 /** @var string $parentPath */
+/** @var string $actualDay */
 ?>
 
 <!DOCTYPE html>
@@ -51,14 +52,20 @@
             <button>Logout</button>
         </a>
         <hr>
-    <?php
-        if(isset($_SESSION['laundry'])){
-            $laundryName = array_search($_SESSION['laundry'], $laundrys);
-            if (!empty($backups) && $laundryName !== false) {
-                echo "<h2>Backups " . strtoupper($laundryName) . "</h2><br>";
-            }
-        }
-    ?>
+        <?php if(isset($_SESSION['laundry'])):
+                $laundryName = strtoupper(array_search($_SESSION['laundry'], $laundrys));
+        ?>
+            <?php if (!empty($backups) && $laundryName !== false): ?>
+                <h2>Backups <?= $laundryName ?> </h2><br>
+                <div id="actualDayBackup">
+                    <a href="?path=<?= $actualDay ?>">
+                        <button>
+                            Ver Backup de Hoje
+                        </button>
+                    </a>
+                </div>
+            <?php endif?>
+        <?php endif?>
 
     <?php if (isset($_SESSION['laundry']) && $currentPath !== ''): ?>
         <a href="?path=<?= urlencode($parentPath) ?>">⬆️📁</a>

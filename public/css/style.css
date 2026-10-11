@@ -29,3 +29,8 @@ main {
     box-shadow: 2px 2px 2px black;
 }
 
+#actualDayBackup > a > button {
+    border-radius: 20px;
+    color: rgb(0, 153, 255);
+    margin-bottom: 20px;
+}
